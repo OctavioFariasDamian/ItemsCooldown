@@ -61,7 +61,7 @@ public void onCooldown(ItemCooldownEvent event) {
         return;
     }
 
-    if (vent.getMaterial() == Material.ENDER_PEARL){
+    if (event.getMaterial() == Material.ENDER_PEARL){
         event.setCancelled(true);
         player.sendMessage("You bypass Ender Pearl item Cooldown!");
     }
