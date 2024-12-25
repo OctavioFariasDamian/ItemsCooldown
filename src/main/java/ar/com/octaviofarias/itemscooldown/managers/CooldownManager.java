@@ -2,9 +2,11 @@ package ar.com.octaviofarias.itemscooldown.managers;
 
 import ar.com.octaviofarias.itemscooldown.CooldownCommand;
 import ar.com.octaviofarias.itemscooldown.ItemsCooldown;
+import ar.com.octaviofarias.itemscooldown.event.ItemCooldownEvent;
 import ar.com.octaviofarias.itemscooldown.model.CooldownData;
 import ar.com.octaviofarias.itemscooldown.model.UserData;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -51,6 +53,12 @@ public class CooldownManager implements Listener {
         Material material = event.getItem().getType();
 
         if (ItemsCooldown.getCooldownManager().has(player, material)) {
+            ItemCooldownEvent event1 = new ItemCooldownEvent(player, event.getItem(), material, new CooldownData(material, ItemsCooldown.getCooldownManager().getTimeLeft(player, material)));
+
+            Bukkit.getPluginManager().callEvent(event1);
+
+            if(event1.isCancelled()) return;
+
             event.setCancelled(true);
 
             long timeLeft = getTimeLeft(player, material);
