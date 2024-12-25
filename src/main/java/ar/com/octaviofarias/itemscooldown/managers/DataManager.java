@@ -12,7 +12,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings({"ResultOfMethodCallIgnored", "CallToPrintStackTrace"})
+@SuppressWarnings("CallToPrintStackTrace")
 public class DataManager {
     private JSONObject json;
     private File file;
@@ -34,8 +34,8 @@ public class DataManager {
                 List<CooldownData> cooldowns = new ArrayList<>();
                 JSONObject data = json.getJSONObject(userData.getUuid().toString());
                 data.keySet().forEach(key -> {
-                    long remainingTimeInSeconds = data.getLong(key);
-                    cooldowns.add(new CooldownData(Material.matchMaterial(key), remainingTimeInSeconds * 1000));
+                    int remainingTimeInSeconds = data.getInt(key);
+                    cooldowns.add(new CooldownData(Material.matchMaterial(key), remainingTimeInSeconds));
                 });
                 userData.setCooldowns(cooldowns);
             } catch (Exception e) {
@@ -50,7 +50,7 @@ public class DataManager {
             JSONObject userObject = new JSONObject();
             for (CooldownData cooldown : userData.getCooldowns()) {
                 if (!cooldown.isFinished()) {
-                    userObject.put(cooldown.getMaterial().name(), cooldown.getRemainingTime() / 1000);
+                    userObject.put(cooldown.getMaterial().name(), cooldown.getRemainingTime());
                 }
             }
             json.put(userData.getUuid().toString(), userObject);
@@ -62,7 +62,7 @@ public class DataManager {
         }
     }
 
-    public void saveAllUsers(List<UserData> users) {
-        users.forEach(this::saveUserData);
+    public void saveAllUsers() {
+        ItemsCooldown.getCooldownManager().getUsers().forEach(this::saveUserData);
     }
 }

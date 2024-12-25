@@ -2,6 +2,7 @@ package ar.com.octaviofarias.itemscooldown;
 
 import ar.com.octaviofarias.itemscooldown.managers.CooldownManager;
 import ar.com.octaviofarias.itemscooldown.managers.DataManager;
+import ar.com.octaviofarias.itemscooldown.tasks.CooldownTask;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,6 +18,7 @@ public class ItemsCooldown extends JavaPlugin {
     @Getter
     private static CooldownManager cooldownManager;
     private static ItemsCooldown instance;
+    private CooldownTask tasK;
 
     public static ItemsCooldown inst() {
         return instance;
@@ -33,35 +35,14 @@ public class ItemsCooldown extends JavaPlugin {
 
         dataManager.init();
 
-        long lastSavedTime = loadLastSavedTime();
-        long elapsedTime = System.currentTimeMillis() - lastSavedTime;
-        cooldownManager.adjustCooldowns(elapsedTime);
+        tasK = new CooldownTask();
+        tasK.runTaskTimerAsynchronously(this, 0L, 20L);
     }
 
     public void onDisable() {
-        long currentTime = System.currentTimeMillis();
-        dataManager.saveAllUsers(cooldownManager.getUsers());
-        saveLastSavedTime(currentTime);
+        if(tasK.isCancelled()) return;
+        tasK.cancel();
+        dataManager.saveAllUsers();
     }
 
-    private long loadLastSavedTime() {
-        try {
-            File timeFile = new File(getDataFolder(), "lastSavedTime.txt");
-            if (timeFile.exists()) {
-                return Long.parseLong(Files.readString(timeFile.toPath()));
-            }
-        } catch (IOException e) {
-            getLogger().warning("Could not load last saved time: " + e.getMessage());
-        }
-        return System.currentTimeMillis();
-    }
-
-    private void saveLastSavedTime(long currentTime) {
-        try {
-            File timeFile = new File(getDataFolder(), "lastSavedTime.txt");
-            Files.writeString(timeFile.toPath(), String.valueOf(currentTime));
-        } catch (IOException e) {
-            getLogger().severe("Could not save last saved time: " + e.getMessage());
-        }
-    }
 }

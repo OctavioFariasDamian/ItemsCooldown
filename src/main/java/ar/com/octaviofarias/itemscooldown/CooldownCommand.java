@@ -19,6 +19,10 @@ import java.util.stream.Collectors;
 public class CooldownCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+        if(!commandSender.hasPermission("itemscooldown.command")){
+            sendMessage(commandSender, "&cYou don't have permission to use this command.");
+            return false;
+        }
         if(args.length < 3){
             sendMessage(commandSender, "&cThe usage of the command is: &7/cooldown <player> <material> <seconds>");
             return false;
@@ -57,8 +61,8 @@ public class CooldownCommand implements TabExecutor {
         }
 
         ItemsCooldown.getCooldownManager().add(p, material, seconds);
-        sendMessage(commandSender, "&fYou add item/block cooldown for &e"+seconds+" &fto &a" + p.getName()+"&f!");
-
+        sendMessage(commandSender, "&fYou add "+ (material.isBlock() ? "block" : "item" )+" cooldown for &e"+seconds+" &fto &a" + p.getName()+"&f!");
+        ItemsCooldown.getDataManager().saveUserData(ItemsCooldown.getCooldownManager().getUserData(p.getName()));
         return true;
     }
 

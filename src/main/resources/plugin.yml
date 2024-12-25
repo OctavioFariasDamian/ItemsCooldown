@@ -5,6 +5,4 @@ author: "OctavioFarias"
 api-version: '1.21'
 commands:
   cooldown:
-    permission: "itemscooldown.command"
-    usage: "/cooldown <player> <material> <seconds>"
     description: "Add a item/block cooldown to a player"

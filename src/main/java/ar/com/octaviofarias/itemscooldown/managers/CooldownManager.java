@@ -23,14 +23,14 @@ public class CooldownManager implements Listener {
         return users.stream().filter(user -> user.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
-    public void add(Player player, Material material, long seconds) {
+    public void add(Player player, Material material, int seconds) {
         UserData user = getUserData(player.getName());
         if (user != null) {
-            user.getCooldowns().add(new CooldownData(material, seconds * 1000));
+            user.getCooldowns().add(new CooldownData(material, seconds));
         }
     }
 
-    public long getTimeLeft(Player player, Material material) {
+    public int getTimeLeft(Player player, Material material) {
         UserData user = getUserData(player.getName());
         if (user != null && user.has(material)) {
             return user.getTimeLeft(material);
@@ -41,14 +41,6 @@ public class CooldownManager implements Listener {
     public boolean has(Player player, Material material) {
         UserData user = getUserData(player.getName());
         return user != null && user.has(material);
-    }
-
-    public void adjustCooldowns(long elapsedTime) {
-        for (UserData user : users) {
-            for (CooldownData cooldown : user.getCooldowns()) {
-                cooldown.reduceTime(elapsedTime);
-            }
-        }
     }
 
     @EventHandler

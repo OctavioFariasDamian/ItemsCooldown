@@ -8,13 +8,13 @@ import org.bukkit.Material;
 @Getter
 public class CooldownData {
     private final Material material;
-    private long remainingTime;
+    private int remainingTime;
 
     public boolean isFinished() {
         return remainingTime <= 0;
     }
 
-    public void reduceTime(long elapsedTime) {
+    public void reduceTime(int elapsedTime) {
         this.remainingTime -= elapsedTime;
     }
 }
